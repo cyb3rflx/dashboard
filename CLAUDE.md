@@ -1,77 +1,80 @@
 # CLAUDE.md
 
-Anweisungen und Projektinfos für Claude in diesem Projekt.
+Instructions and project info for Claude in this project.
 
-## Projekt
+## Project
 
-Ein Dashboard, in dem sich Nutzer registrieren, einloggen und ihre eigenen
-**Items** verwalten (ansehen, anlegen, bearbeiten, löschen).
+A dashboard where users register, log in, and manage their own **items**
+(view, create, edit, delete).
 
-- **Backend:** FastAPI + SQLModel, Auth über JWT (PyJWT), ASGI via uvicorn.
-- **Frontend:** React 19 + TypeScript, Build mit Vite.
-- **Seiten:** Registrierung, Login, Dashboard (Dashboard nur mit Login).
+- **Backend:** FastAPI + SQLModel, auth via JWT (PyJWT), ASGI via uvicorn.
+- **Frontend:** React 19 + TypeScript, built with Vite.
+- **Pages:** Registration, Login, Dashboard (Dashboard requires login).
 
-## Architektur
+## Architecture
 
-- Entkoppelte SPA (Frontend) + zustandslose REST-API (Backend), JSON über HTTP.
-- Auth ist **zustandslos per JWT** (`Authorization: Bearer <token>`), keine
-  Server-Sessions.
-- DB: SQLite in der Entwicklung, später Postgres (via SQLModel/SQLAlchemy).
+- Decoupled SPA (frontend) + stateless REST API (backend), JSON over HTTP.
+- Auth is **stateless via JWT** (`Authorization: Bearer <token>`), no server
+  sessions.
+- DB: SQLite in development, Postgres later (via SQLModel/SQLAlchemy).
 
 ## Commands
-- Backend-Tests: `uv run pytest`
-- Backend-Dev: `uv run uvicorn app.main:app --reload --port 8000`
-- Frontend-Build/Typecheck: `npm run build`
-- Frontend-Dev: `npm run dev`
-(Vollständiges Setup + Env-Variablen: siehe README)
 
-## Datenmodell
+- Backend tests: `uv run pytest`
+- Backend dev: `uv run uvicorn app.main:app --reload --port 8000`
+- Frontend build/typecheck: `npm run build`
+- Frontend dev: `npm run dev`
+
+(Full setup + env variables: see README.)
+
+## Data model
 
 - **User**: `id`, `email` (unique), `password_hash`, `created_at`.
 - **Item**: `id`, `owner_id` (FK → User), `title`, `description?`,
   `created_at`, `updated_at`.
-- 1:N (ein User hat viele Items). **Ownership wird immer serverseitig erzwungen** –
-  jede Item-Abfrage ist auf `owner_id == current_user.id` eingeschränkt. Dem
-  Client wird dabei nichts geglaubt.
+- 1:N (one user has many items). **Ownership is always enforced server-side** –
+  every item query is scoped to `owner_id == current_user.id`. The client is
+  never trusted for this.
 
-## API (geplant)
+## API (planned)
 
-| Methode | Pfad             | Auth | Zweck                          |
-| ------- | ---------------- | ---- | ------------------------------ |
-| POST    | `/auth/register` | Nein | Konto anlegen                  |
-| POST    | `/auth/login`    | Nein | Einloggen, JWT zurückgeben     |
-| GET     | `/auth/me`       | Ja   | Aktuellen User zurückgeben     |
-| GET     | `/items`         | Ja   | Eigene Items auflisten         |
-| POST    | `/items`         | Ja   | Item anlegen                   |
-| GET     | `/items/{id}`    | Ja   | Ein eigenes Item lesen         |
-| PUT     | `/items/{id}`    | Ja   | Ein eigenes Item ändern        |
-| DELETE  | `/items/{id}`    | Ja   | Ein eigenes Item löschen       |
+| Method | Path             | Auth | Purpose                       |
+| ------ | ---------------- | ---- | ----------------------------- |
+| POST   | `/auth/register` | No   | Create an account             |
+| POST   | `/auth/login`    | No   | Log in, return a JWT          |
+| GET    | `/auth/me`       | Yes  | Return the current user       |
+| GET    | `/items`         | Yes  | List own items                |
+| POST   | `/items`         | Yes  | Create an item                |
+| GET    | `/items/{id}`    | Yes  | Read one own item             |
+| PUT    | `/items/{id}`    | Yes  | Update one own item           |
+| DELETE | `/items/{id}`    | Yes  | Delete one own item           |
 
-## Nicht im Scope
+## Out of scope
 
-Sharing/Kollaboration, Rollen über "Owner" hinaus, Passwort-Reset/Social-Login/2FA,
-Datei-Uploads.
+Sharing/collaboration, roles beyond "owner", password reset/social login/2FA,
+file uploads.
 
-## Konventionen
+## Conventions
 
-- Python-Umgebung und Abhängigkeiten immer mit **`uv`** verwalten (kein `pip`).
-- Dependencies einzeln angeben (`fastapi` + `uvicorn[standard]`), nicht `fastapi[standard]`.
-- Setup, Startbefehle und Umgebungsvariablen stehen in der **README** – dort
-  nachschlagen bzw. dort pflegen, statt sie hier zu duplizieren.
+- Always manage the Python environment and dependencies with **`uv`** (no `pip`).
+- List dependencies individually (`fastapi` + `uvicorn[standard]`), not
+  `fastapi[standard]`.
+- Setup, start commands, and env variables live in the **README** – look them
+  up / maintain them there instead of duplicating them here.
 
-## Lernmodus (wichtig)
+## Learning mode (important)
 
-Florian möchte mit diesem Projekt **FastAPI und React lernen**.
+Florian is using this project to **learn FastAPI and React**.
 
-- **Schreibe keinen fertigen Code.** Gib keine kompletten Lösungen vor.
-- Florian schreibt den Code **selbst**, damit er es lernt.
-- Deine Aufgabe: **erklären, anleiten, Hinweise geben** – mit Konzepten,
-  Stichworten, Pseudocode, kleinen Syntaxbeispielen oder führenden Fragen.
-- Wenn Florian feststeckt, hilf in **kleinen Schritten**, statt die ganze
-  Lösung zu zeigen.
-- Verrate eine vollständige Lösung nur, wenn Florian **ausdrücklich** darum bittet.
+- **Do not write finished code.** Do not hand over complete solutions.
+- Florian writes the code **himself** so that he learns it.
+- Your job: **explain, guide, give hints** – with concepts, keywords,
+  pseudocode, small syntax examples, or leading questions.
+- When Florian is stuck, help in **small steps** instead of showing the whole
+  solution.
+- Only reveal a full solution if Florian **explicitly** asks for it.
 
-## Kommunikation
+## Communication
 
-- Antworte **immer auf Deutsch**.
-- Bei Fragen: **kurz und einfach** antworten.
+- Florian communicates with you in **German** – always reply in **German**.
+- For questions: answer **short and simple**.

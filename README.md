@@ -1,53 +1,54 @@
 # Dashboard
 
-Ein Dashboard, in dem sich Nutzer registrieren, einloggen und ihre eigenen
-**Items** verwalten (ansehen, anlegen, bearbeiten, löschen).
+A dashboard where users register, log in, and manage their own **items**
+(view, create, edit, delete).
 
-- **Backend:** FastAPI + SQLModel, Auth über JWT (PyJWT), ASGI via uvicorn.
-- **Frontend:** React 19 + TypeScript, Build mit Vite.
+- **Backend:** FastAPI + SQLModel, auth via JWT (PyJWT), ASGI via uvicorn.
+- **Frontend:** React 19 + TypeScript, built with Vite.
 
-Projektdetails (Architektur, Datenmodell, API, Konventionen) stehen in
+Project details (architecture, data model, API, conventions) are in
 [CLAUDE.md](CLAUDE.md).
 
-## Aktueller Stand
+> Learning project to get hands-on with FastAPI and React (TypeScript).
 
-Projekt-Grundgerüst steht, die Anwendungslogik ist noch nicht implementiert.
+## Current status
 
-- **Backend:** Abhängigkeiten und Entrypoint (`app.main:app`) in `pyproject.toml`
-  konfiguriert. Das Paket `backend/app/` ist noch leer.
-- **Frontend:** Vite-Scaffold mit React 19 + TypeScript (`App.tsx`, `main.tsx`).
-  Seiten (Registrierung, Login, Dashboard) sind noch nicht gebaut.
+The project skeleton is in place; the application logic is not implemented yet.
 
-## Voraussetzungen
+- **Backend:** Dependencies and entrypoint (`app.main:app`) configured in
+  `pyproject.toml`. The `backend/app/` package is still empty.
+- **Frontend:** Vite scaffold with React 19 + TypeScript (`App.tsx`, `main.tsx`).
+  Pages (Registration, Login, Dashboard) are not built yet.
 
-- Python **>= 3.14** und [`uv`](https://docs.astral.sh/uv/)
-- Node.js (LTS) und npm
+## Requirements
 
-## Backend starten
+- Python **>= 3.14** and [`uv`](https://docs.astral.sh/uv/)
+- Node.js (LTS) and npm
+
+## Run the backend
 
 ```bash
 cd backend
-uv sync                       # Abhängigkeiten installieren
+uv sync                       # install dependencies
 uv run uvicorn app.main:app --reload --port 8000
 ```
 
-- API-Doku (Swagger UI): `http://localhost:8000/docs`
-- Hinweis: läuft erst, sobald `app/main.py` mit einer FastAPI-App existiert.
+- API docs (Swagger UI): `http://localhost:8000/docs`
+- Note: only runs once `app/main.py` provides a FastAPI app.
 
-## Frontend starten
+## Run the frontend
 
 ```bash
 cd frontend
 npm install
-npm run dev                   # Vite-Dev-Server, http://localhost:5173
+npm run dev                   # Vite dev server, http://localhost:5173
 ```
 
-## Umgebungsvariablen (Backend)
+## Environment variables (backend)
 
-| Variable         | Zweck                                | Beispiel                    |
+| Variable         | Purpose                              | Example                     |
 | ---------------- | ------------------------------------ | --------------------------- |
-| `DATABASE_URL`   | DB-Verbindung (SQLModel)             | `sqlite:///./dashboard.db`  |
-| `JWT_SECRET`     | Secret zum Signieren der JWTs        | `change-me-in-production`   |
-| `JWT_EXPIRE_MIN` | Token-Gültigkeit in Minuten          | `60`                        |
-| `CORS_ORIGINS`   | Erlaubte Frontend-Origin(s)          | `http://localhost:5173`     |
-
+| `DATABASE_URL`   | DB connection (SQLModel)             | `sqlite:///./dashboard.db`  |
+| `JWT_SECRET`     | Secret for signing JWTs              | `change-me-in-production`   |
+| `JWT_EXPIRE_MIN` | Token lifetime in minutes            | `60`                        |
+| `CORS_ORIGINS`   | Allowed frontend origin(s)           | `http://localhost:5173`     |
