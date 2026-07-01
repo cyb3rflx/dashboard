@@ -30,7 +30,8 @@ A dashboard where users register, log in, and manage their own **items**
 
 ## Data model
 
-- **User**: `id`, `email` (unique), `password_hash`, `created_at`.
+- **User**: `id`, `email` (unique), `username` (unique), `password_hash`,
+  `created_at`.
 - **Item**: `id`, `owner_id` (FK → User), `title`, `description?`,
   `created_at`, `updated_at`.
 - 1:N (one user has many items). **Ownership is always enforced server-side** –
