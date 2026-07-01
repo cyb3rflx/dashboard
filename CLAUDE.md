@@ -8,7 +8,8 @@ A dashboard where users register, log in, and manage their own **items**
 (view, create, edit, delete).
 
 - **Backend:** FastAPI + SQLModel, auth via JWT (PyJWT), ASGI via uvicorn.
-- **Frontend:** React 19 + TypeScript, built with Vite.
+- **Frontend:** React 19 + TypeScript, built with Vite. Styling with
+  **Tailwind CSS**, UI components via **shadcn/ui**.
 - **Pages:** Registration, Login, Dashboard (Dashboard requires login).
 
 ## Architecture
@@ -61,6 +62,10 @@ file uploads.
   `fastapi[standard]`.
 - Setup, start commands, and env variables live in the **README** – look them
   up / maintain them there instead of duplicating them here.
+- **Styling:** use **Tailwind** utility classes; no separate CSS files unless
+  really needed. Prefer **shadcn/ui** components before building custom ones.
+  shadcn components are copied into the repo (e.g. `components/ui/`) and may be
+  edited directly.
 
 ## Learning mode (important)
 
