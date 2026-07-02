@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -16,6 +17,27 @@ import { Input } from "@/components/ui/input"
 import { Link } from "react-router"
 
 export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
+  
+  const [username, setUsername] = useState("")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [error, setError] = useState("")
+
+  function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
+    e.preventDefault()
+    setError("")
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters long.")
+      return
+    }
+    if ( password !== confirmPassword) {
+      setError("Passwords do not match")
+      return;
+    }
+    console.log(username, email, password, confirmPassword)
+  }
+  
   return (
     <Card {...props}>
       <CardHeader>
@@ -25,11 +47,12 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form>
+        <form onSubmit={handleSubmit}>
           <FieldGroup>
             <Field>
               <FieldLabel htmlFor="username">Username</FieldLabel>
-              <Input id="username" type="text" placeholder="Deadpool" required />
+              <Input id="username" type="text" placeholder="Deadpool" value={username} 
+                  onChange={e => setUsername(e.currentTarget.value)} required />
             </Field>
             <Field>
               <FieldLabel htmlFor="email">Email</FieldLabel>
@@ -37,6 +60,8 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
                 id="email"
                 type="email"
                 placeholder="m@example.com"
+                value={email} 
+                onChange={e => setEmail(e.currentTarget.value)}
                 required
               />
               <FieldDescription>
@@ -46,7 +71,8 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
             </Field>
             <Field>
               <FieldLabel htmlFor="password">Password</FieldLabel>
-              <Input id="password" type="password" required />
+              <Input id="password" type="password" value={password} 
+                  onChange={e => setPassword(e.currentTarget.value)} required />
               <FieldDescription>
                 Must be at least 8 characters long.
               </FieldDescription>
@@ -55,11 +81,13 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
               <FieldLabel htmlFor="confirm-password">
                 Confirm Password
               </FieldLabel>
-              <Input id="confirm-password" type="password" required />
+              <Input id="confirm-password" type="password" value={confirmPassword} 
+                  onChange={e => setConfirmPassword(e.currentTarget.value)} required />
               <FieldDescription>Please confirm your password.</FieldDescription>
             </Field>
             <FieldGroup>
               <Field>
+                {error && <p className="text-sm text-red-500">{error}</p>}
                 <Button type="submit">Create Account</Button>
                 <FieldDescription className="px-6 text-center">
                   Already have an account? <Link to={"/login"}>Sign in</Link>

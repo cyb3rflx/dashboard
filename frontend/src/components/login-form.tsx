@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -18,6 +19,15 @@ import { Link } from "react-router"
 export function LoginForm({
   ...props
 }: React.ComponentProps<typeof Card>) {
+  
+    const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
+
+    function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
+      e.preventDefault()
+      console.log(email, password)
+    }
+  
   return (
       <Card {...props}>
         <CardHeader>
@@ -27,13 +37,15 @@ export function LoginForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <form onSubmit={handleSubmit}>
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
                 <Input
                   id="email"
                   type="email"
+                  value={email} 
+                  onChange={e => setEmail(e.currentTarget.value)}
                   placeholder="m@example.com"
                   required
                 />
@@ -42,7 +54,8 @@ export function LoginForm({
                 <div className="flex items-center">
                   <FieldLabel htmlFor="password">Password</FieldLabel>
                 </div>
-                <Input id="password" type="password" required />
+                <Input id="password" type="password" value={password} 
+                  onChange={e => setPassword(e.currentTarget.value)} required />
               </Field>
               <Field>
                 <Button type="submit">Login</Button>
