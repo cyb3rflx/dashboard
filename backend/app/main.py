@@ -1,12 +1,15 @@
-from fastapi import FastAPI, status, HTTPException, Depends
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi import FastAPI, status, HTTPException, Depends, Response, Cookie
+from fastapi.security import OAuth2PasswordRequestForm
 from contextlib import asynccontextmanager
 from .db import create_db_and_tables, SessionDep
-from .models import UserPublic, UserCreate, User, Token
-from .security import password_hash, DUMMY_HASH, create_access_token
+from .models import UserPublic, UserCreate, User
+from .security import password_hash, DUMMY_HASH, create_access_token, SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
 from pydantic import EmailStr
 from sqlmodel import Session, select
 from typing import Annotated
+import jwt
+from jwt.exceptions import InvalidTokenError
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -58,6 +61,31 @@ def authenticate_user(session: Session, email: str, password:str):
         return False
     return user
 
+def get_current_user(
+        session: SessionDep, 
+        access_token: Annotated[str | None, Cookie()] = None
+    ):
+    credential_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials"
+    )
+
+    if not access_token:
+        raise credential_exception
+    
+    try:
+      payload = jwt.decode(jwt=access_token, key=SECRET_KEY, algorithms=[ALGORITHM])
+      user_id = int(payload.get("sub"))
+      if not user_id:
+        raise credential_exception
+    except (InvalidTokenError, TypeError, ValueError):
+      raise credential_exception
+    user = session.get(User, user_id)
+    if not user:
+        raise credential_exception
+    return user
+
+
 
 
 @app.post("/auth/register", response_model=UserPublic, status_code=status.HTTP_201_CREATED)
@@ -74,9 +102,10 @@ async def create_user(session: SessionDep, user: UserCreate):
         )
     return create_new_user(session, user)
 
-@app.post("/auth/login", response_model=Token, status_code=status.HTTP_200_OK)
+@app.post("/auth/login", response_model=UserPublic, status_code=status.HTTP_200_OK)
 async def login_user(
-    session: SessionDep, 
+    session: SessionDep,
+    response: Response, 
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
 ):
     user = authenticate_user(session, 
@@ -87,5 +116,24 @@ async def login_user(
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, 
                             detail="Incorrect email or password"
                             )
+    
     access_token = create_access_token(user.id)
-    return Token(access_token=access_token, token_type="bearer")
+    response.set_cookie(
+        key="access_token",
+        value=access_token,
+        httponly=True,
+        samesite="lax",
+        secure=False,
+        max_age=60 * ACCESS_TOKEN_EXPIRE_MINUTES,
+    )
+
+    return user
+
+@app.get("/auth/me", response_model=UserPublic)
+async def get_user(user: Annotated[User, Depends(get_current_user)]):
+    return user
+
+@app.post("/auth/logout")
+async def logout_user(response: Response):
+    response.delete_cookie("access_token")
+    return {"message": "logout"}

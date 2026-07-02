@@ -19,6 +19,3 @@ class UserPublic(UserBase):
     id: int
     created_at: datetime
 
-class Token(SQLModel):
-    access_token: str
-    token_type: str

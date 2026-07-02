@@ -15,8 +15,11 @@ A dashboard where users register, log in, and manage their own **items**
 ## Architecture
 
 - Decoupled SPA (frontend) + stateless REST API (backend), JSON over HTTP.
-- Auth is **stateless via JWT** (`Authorization: Bearer <token>`), no server
-  sessions.
+- Auth is **stateless via JWT** stored in an **httpOnly cookie**
+  (`access_token`), no server sessions. The cookie is set/cleared by the
+  backend on login/logout (`samesite=lax`; `secure=True` in production).
+  Frontend requests must use `credentials: "include"`; CORS is configured
+  with `allow_credentials=True` and explicit origins (no `*`).
 - DB: SQLite in development, Postgres later (via SQLModel/SQLAlchemy).
 
 ## Commands
@@ -43,7 +46,8 @@ A dashboard where users register, log in, and manage their own **items**
 | Method | Path             | Auth | Purpose                       |
 | ------ | ---------------- | ---- | ----------------------------- |
 | POST   | `/auth/register` | No   | Create an account             |
-| POST   | `/auth/login`    | No   | Log in, return a JWT          |
+| POST   | `/auth/login`    | No   | Log in, set JWT cookie        |
+| POST   | `/auth/logout`   | Yes  | Log out, clear JWT cookie     |
 | GET    | `/auth/me`       | Yes  | Return the current user       |
 | GET    | `/items`         | Yes  | List own items                |
 | POST   | `/items`         | Yes  | Create an item                |
