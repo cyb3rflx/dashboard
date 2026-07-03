@@ -1,5 +1,12 @@
 const API_URL = "http://localhost:8000"
 
+export type User = {
+    id: number
+    username: string
+    email: string
+    created_at: string
+}
+
 export async function register(username: string, email: string, password: string) {
     const response = await fetch(`${API_URL}/auth/register`, {
         method: "POST",
@@ -35,7 +42,7 @@ export async function login(email: string, password: string) {
     return response.json()
 }
 
-export async function me() {
+export async function me(): Promise<User> {
     const response = await fetch(`${API_URL}/auth/me`, {
         method: "GET",
         credentials: "include",

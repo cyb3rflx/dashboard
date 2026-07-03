@@ -13,14 +13,10 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 import { LayoutDashboardIcon, UserIcon, PackageIcon } from "lucide-react"
+import type { User } from "@/api/auth"
 
 // This is sample data.
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
   navMain: [
     {
       title: "Dashboard",
@@ -50,7 +46,7 @@ const data = {
   ],
 }
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({user, ...props }: React.ComponentProps<typeof Sidebar> & { user: User }) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -60,7 +56,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavMain items={data.navMain} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={user} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
