@@ -1,14 +1,14 @@
 from fastapi import FastAPI, status, HTTPException, Depends, Response, Cookie
-from fastapi.security import OAuth2PasswordRequestForm
 from contextlib import asynccontextmanager
 from .db import create_db_and_tables, SessionDep
-from .models import UserPublic, UserCreate, User
+from .models import UserPublic, UserCreate, User, UserLogin
 from .security import password_hash, DUMMY_HASH, create_access_token, SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
 from pydantic import EmailStr
 from sqlmodel import Session, select
 from typing import Annotated
 import jwt
 from jwt.exceptions import InvalidTokenError
+from fastapi.middleware.cors import CORSMiddleware
 
 
 @asynccontextmanager
@@ -17,6 +17,19 @@ async def lifespan(app: FastAPI):
     yield
 
 app = FastAPI(lifespan=lifespan)
+
+origins = [
+    "http://localhost:5173"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+
+)
 
 def verify_password(password, hashed_password):
     return password_hash.verify(password=password, hash=hashed_password)
@@ -106,11 +119,11 @@ async def create_user(session: SessionDep, user: UserCreate):
 async def login_user(
     session: SessionDep,
     response: Response, 
-    form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
+    data: UserLogin,
 ):
     user = authenticate_user(session, 
-                             email=form_data.username, 
-                             password=form_data.password
+                             email=data.email, 
+                             password=data.password
                              )
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, 

@@ -14,7 +14,8 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { Link } from "react-router"
+import { Link, useNavigate } from "react-router"
+import { register } from "@/api/auth"
 
 export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
   
@@ -23,8 +24,9 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [error, setError] = useState("")
+  const navigate = useNavigate()
 
-  function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault()
     setError("")
     if (password.length < 8) {
@@ -35,7 +37,12 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
       setError("Passwords do not match")
       return;
     }
-    console.log(username, email, password, confirmPassword)
+    try {
+      await register(username, email, password)
+      navigate("/login")
+    } catch(err) {
+      setError(err instanceof Error ? err.message : "Signup failed")
+    }
   }
   
   return (

@@ -14,7 +14,8 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { Link } from "react-router"
+import { Link, useNavigate } from "react-router"
+import { login } from "@/api/auth"
 
 export function LoginForm({
   ...props
@@ -22,10 +23,18 @@ export function LoginForm({
   
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
+    const [error, setError] = useState("")
+    const navigate = useNavigate()
 
-    function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
+    async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
       e.preventDefault()
-      console.log(email, password)
+      setError("")
+      try {
+        await login(email, password)
+        navigate("/")
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Login failed")
+      }
     }
   
   return (
@@ -58,6 +67,7 @@ export function LoginForm({
                   onChange={e => setPassword(e.currentTarget.value)} required />
               </Field>
               <Field>
+                {error && <p className="text-sm text-red-500">{error}</p>}
                 <Button type="submit">Login</Button>
                 <FieldDescription className="text-center">
                   Don&apos;t have an account? <Link to={"/register"}>Sign up</Link>

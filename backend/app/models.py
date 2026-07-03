@@ -15,6 +15,10 @@ class User(UserBase, table=True):
 class UserCreate(UserBase):
     password: str
 
+class UserLogin(SQLModel):
+    email: EmailStr
+    password: str
+
 class UserPublic(UserBase):
     id: int
     created_at: datetime

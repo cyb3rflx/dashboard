@@ -13,16 +13,19 @@ import Register from './pages/Register';
 
 import DashboardPage from './pages/DashboardPage';
 import Items from './pages/Items';
+import { ProtectedRoute } from './components/protected-route';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
       <TooltipProvider>
         <Routes>
-          <Route element={<DashboardLayout />}>
-            <Route index element={<DashboardPage />} />
-            <Route path='items' element={<Items />} />
-            <Route path='user' element={<User />} />
+          <Route element={<ProtectedRoute />}>
+            <Route element={<DashboardLayout />}>
+              <Route index element={<DashboardPage />} />
+              <Route path='items' element={<Items />} />
+              <Route path='user' element={<User />} />
+            </Route>
           </Route>
 
           <Route element={<AuthLayout />}>
