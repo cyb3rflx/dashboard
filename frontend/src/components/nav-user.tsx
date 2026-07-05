@@ -1,4 +1,4 @@
-import type { User } from "@/api/auth"
+import { logout, type User } from "@/api/auth"
 import {
   Avatar,
   AvatarFallback,
@@ -19,9 +19,16 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { ChevronsUpDownIcon, BadgeCheckIcon, LogOutIcon } from "lucide-react"
+import { useNavigate } from "react-router"
 
 export function NavUser({ user }: { user: User } ) {
   const { isMobile } = useSidebar()
+  const navigate = useNavigate()
+
+  async function handleLogout() {
+    await logout()
+    navigate("/login")
+  }
 
   return (
     <SidebarMenu>
@@ -71,7 +78,7 @@ export function NavUser({ user }: { user: User } ) {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout}>
               <LogOutIcon
               />
               Log out

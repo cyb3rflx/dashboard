@@ -54,3 +54,16 @@ export async function me(): Promise<User> {
     }
     return response.json()
 }
+
+export async function logout() {
+    const response = await fetch(`${API_URL}/auth/logout`, {
+        method: "POST",
+        credentials: "include",
+    })
+
+    if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.detail ?? "Logout failed")
+    }
+    return response.json()
+}
