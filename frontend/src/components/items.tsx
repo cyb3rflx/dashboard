@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { Item } from "@/api/items";
-import { getItems } from "@/api/items";
+import { deleteItem, getItems } from "@/api/items";
 
 import { MoreHorizontalIcon } from "lucide-react"
 
@@ -38,32 +38,42 @@ export function ItemsTable() {
        loadItems()
     }, [])
 
-    const dropdownMenu = 
-        <DropdownMenu>                    
-            <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="size-8">
-                <MoreHorizontalIcon />
-                <span className="sr-only">Open menu</span>
-                </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-                <DropdownMenuItem>Edit</DropdownMenuItem>
-                <DropdownMenuItem>Duplicate</DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem variant="destructive">
-                Delete
-                </DropdownMenuItem>
-            </DropdownMenuContent>
-        </DropdownMenu>
+    if (status == "loading") {
+        return <p>Loading...</p>
+    }
+
+    if (status == "unauthorized") {
+        return <p>Could not load items.</p>
+    }
+
+    async function handleDelete(item_id: string) {
+        await deleteItem(item_id)
+        setItems(await getItems())
+    }
 
     const listItems = items.map(item =>
-        <TableRow>
+        <TableRow key={item.id}>
             <TableCell className="font-medium">{item.title}</TableCell>
             <TableCell>{item.description}</TableCell>
             <TableCell>{item.created_at}</TableCell>
             <TableCell>{item.updated_at}</TableCell>
             <TableCell className="text-right">
-                {dropdownMenu}
+                <DropdownMenu>                    
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="size-8">
+                        <MoreHorizontalIcon />
+                        <span className="sr-only">Open menu</span>
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuItem>Edit</DropdownMenuItem>
+                        <DropdownMenuItem>Duplicate</DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem variant="destructive" onClick={() => handleDelete(item.id)}>
+                        Delete
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </TableCell>
         </TableRow>
     )
