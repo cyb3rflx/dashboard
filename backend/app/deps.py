@@ -7,6 +7,7 @@ from app.security import SECRET_KEY, ALGORITHM, password_hash, DUMMY_HASH
 from app.models import User, UserCreate
 import jwt
 from jwt.exceptions import InvalidTokenError
+import uuid
 
 def verify_password(password, hashed_password):
     return password_hash.verify(password=password, hash=hashed_password)
@@ -65,9 +66,7 @@ def get_current_user(
     
     try:
       payload = jwt.decode(jwt=access_token, key=SECRET_KEY, algorithms=[ALGORITHM])
-      user_id = int(payload.get("sub"))
-      if not user_id:
-        raise credential_exception
+      user_id = uuid.UUID(payload.get("sub"))
     except (InvalidTokenError, TypeError, ValueError):
       raise credential_exception
     user = session.get(User, user_id)

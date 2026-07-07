@@ -4,6 +4,7 @@ from app.models import ItemPublic, ItemCreate, Item, ItemUpdate
 from app.db import SessionDep
 from app.deps import CurrentUserDep
 from datetime import datetime
+import uuid
 
 router = APIRouter(prefix="/items", tags=["items"])
 
@@ -22,14 +23,14 @@ async def read_items(session: SessionDep, current_user: CurrentUserDep):
     return items
 
 @router.get("/{item_id}", response_model=ItemPublic)
-async def read_item(session: SessionDep, item_id: int, current_user: CurrentUserDep):
+async def read_item(session: SessionDep, item_id: uuid.UUID, current_user: CurrentUserDep):
     item = session.get(Item, item_id)
     if not item or item.owner_id != current_user.id:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
     return item
 
 @router.put("/{item_id}", response_model=ItemPublic)
-async def update_item(session: SessionDep, item_id: int, current_user: CurrentUserDep, data: ItemUpdate):
+async def update_item(session: SessionDep, item_id: uuid.UUID, current_user: CurrentUserDep, data: ItemUpdate):
     item = session.get(Item, item_id)
     if not item or item.owner_id != current_user.id:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
@@ -41,7 +42,7 @@ async def update_item(session: SessionDep, item_id: int, current_user: CurrentUs
     return item
 
 @router.delete("/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_item(session: SessionDep, item_id: int, current_user: CurrentUserDep):
+async def delete_item(session: SessionDep, item_id: uuid.UUID, current_user: CurrentUserDep):
     item = session.get(Item, item_id)
     if not item or item.owner_id != current_user.id:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)

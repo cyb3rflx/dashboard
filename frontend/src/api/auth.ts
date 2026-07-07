@@ -1,7 +1,7 @@
 const API_URL = "http://localhost:8000"
 
 export type User = {
-    id: number
+    id: string
     username: string
     email: string
     created_at: string
