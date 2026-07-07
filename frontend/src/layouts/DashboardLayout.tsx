@@ -17,8 +17,11 @@ export default function DashboardLayout() {
                         <div className="flex items-center gap-2 px-4">
                             <SidebarTrigger className="-ml-1" />
                         </div>
-                        </header>
-                    <Outlet  context={user}/>
+                    </header>
+                    <div className="flex items-center gap-2 px-4">
+                        <Outlet  context={user}/>
+                    </div>
+                    
                 </SidebarInset>
         </SidebarProvider>
     )
