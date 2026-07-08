@@ -6,7 +6,6 @@ import { TooltipProvider } from "@/components/ui/tooltip"
 
 import DashboardLayout from './layouts/DashboardLayout';
 import AuthLayout from './layouts/AuthLayout';
-import User from './pages/User';
 
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -24,7 +23,6 @@ createRoot(document.getElementById('root')!).render(
             <Route element={<DashboardLayout />}>
               <Route index element={<DashboardPage />} />
               <Route path='items' element={<Items />} />
-              <Route path='user' element={<User />} />
             </Route>
           </Route>
 

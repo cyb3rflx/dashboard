@@ -142,7 +142,7 @@ export function ItemsTable() {
     return (
         <>
             <div className="flex items-center justify-between mb-4">
-                <h1 className="text-lg font-semibold">Items</h1>
+                <h1 className="text-3xl font-bold">Items</h1>
                 <Dialog open={open} onOpenChange={handleOpenChange}>
                     <DialogTrigger asChild>
                     <Button variant="outline">Add Item</Button>

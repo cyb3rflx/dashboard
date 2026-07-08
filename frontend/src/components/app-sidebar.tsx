@@ -12,7 +12,7 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
-import { LayoutDashboardIcon, UserIcon, PackageIcon } from "lucide-react"
+import { LayoutDashboardIcon, PackageIcon } from "lucide-react"
 import type { User } from "@/api/auth"
 
 // This is sample data.
@@ -32,14 +32,6 @@ const data = {
       url: "/items",
       icon: (
         <PackageIcon
-        />
-      ),
-    },
-    {
-      title: "User",
-      url: "/user",
-      icon: (
-        <UserIcon
         />
       ),
     },
