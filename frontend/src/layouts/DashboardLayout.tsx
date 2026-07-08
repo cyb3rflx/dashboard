@@ -18,7 +18,7 @@ export default function DashboardLayout() {
                             <SidebarTrigger className="-ml-1" />
                         </div>
                     </header>
-                    <div className="flex items-center gap-2 px-4">
+                    <div className="flex flex-1 flex-col gap-4 p-4">
                         <Outlet  context={user}/>
                     </div>
                     
