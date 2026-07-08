@@ -14,14 +14,18 @@ Project details (architecture, data model, API, conventions) are in
 
 ## Current status
 
-Work in progress.
+Feature-complete for the learning scope.
 
-- **Backend:** User model + SQLite via SQLModel, `POST /auth/register` and
-  `POST /auth/login` (JWT) implemented. `GET /auth/me` and the items CRUD are
-  next.
-- **Frontend:** Routing (React Router), dashboard layout with sidebar,
-  login/register forms with client-side validation. Not yet connected to the
-  backend API.
+- **Backend:** Auth (`register`, `login`, `logout`, `me`) with JWT in an
+  httpOnly cookie, items CRUD with owner-scoped access, UUID primary keys,
+  SQLite via SQLModel.
+- **Frontend:** Login/registration pages, protected dashboard (sidebar,
+  current user, logout), items table with create/edit/delete dialogs,
+  central API client that redirects to `/login` on 401.
+
+Known limitations (dev setup): cookie is set with `secure=False` (needs
+HTTPS/`True` in production), naive local timestamps instead of UTC, no DB
+migrations (schema changes require deleting `database.db`).
 
 ## Requirements
 

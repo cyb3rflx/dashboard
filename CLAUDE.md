@@ -20,6 +20,10 @@ A dashboard where users register, log in, and manage their own **items**
   backend on login/logout (`samesite=lax`; `secure=True` in production).
   Frontend requests must use `credentials: "include"`; CORS is configured
   with `allow_credentials=True` and explicit origins (no `*`).
+- Frontend API calls go through a small fetch wrapper
+  (`frontend/src/api/client.ts`) that sends credentials and redirects to
+  `/login` on 401. Exception: the login request uses plain `fetch`, since a
+  401 there means "wrong credentials", not "session expired".
 - DB: SQLite in development, Postgres later (via SQLModel/SQLAlchemy).
 
 ## Commands
@@ -33,10 +37,11 @@ A dashboard where users register, log in, and manage their own **items**
 
 ## Data model
 
-- **User**: `id`, `email` (unique), `username` (unique), `password_hash`,
-  `created_at`.
-- **Item**: `id`, `owner_id` (FK → User), `title`, `description?`,
+- **User**: `id` (UUID), `email` (unique), `username` (unique),
+  `password_hash`, `created_at`.
+- **Item**: `id` (UUID), `owner_id` (FK → User), `title`, `description?`,
   `created_at`, `updated_at`.
+- All primary keys are **UUIDs**, generated server-side (`uuid4`).
 - 1:N (one user has many items). **Ownership is always enforced server-side** –
   every item query is scoped to `owner_id == current_user.id`. The client is
   never trusted for this.
