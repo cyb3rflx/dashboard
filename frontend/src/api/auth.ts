@@ -1,4 +1,4 @@
-export const API_URL = "http://localhost:8000"
+import { API_URL, apiFetch } from "./client"
 
 export type User = {
     id: string
@@ -25,6 +25,8 @@ export async function register(username: string, email: string, password: string
     return response.json()
 }
 
+// Plain fetch: 401 heißt hier "falsches Passwort", nicht "Session abgelaufen"
+// -> darf nicht vom apiFetch-Wrapper zu /login umgeleitet werden
 export async function login(email: string, password: string) {
     const response = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
@@ -43,10 +45,7 @@ export async function login(email: string, password: string) {
 }
 
 export async function me(): Promise<User> {
-    const response = await fetch(`${API_URL}/auth/me`, {
-        method: "GET",
-        credentials: "include",
-    })
+    const response = await apiFetch(`/auth/me`)
 
     if (!response.ok) {
         const data = await response.json()
@@ -56,9 +55,8 @@ export async function me(): Promise<User> {
 }
 
 export async function logout() {
-    const response = await fetch(`${API_URL}/auth/logout`, {
+    const response = await apiFetch(`/auth/logout`, {
         method: "POST",
-        credentials: "include",
     })
 
     if (!response.ok) {
