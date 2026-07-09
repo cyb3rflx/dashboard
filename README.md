@@ -25,7 +25,7 @@ Feature-complete for the learning scope.
 
 Known limitations (dev setup): cookie is set with `secure=False` (needs
 HTTPS/`True` in production), naive local timestamps instead of UTC, no DB
-migrations (schema changes require deleting `database.db`).
+migrations (schema changes require a fresh database).
 
 ## Requirements
 
@@ -67,6 +67,30 @@ cp .env.example .env
 | `SECRET_KEY`                  | Secret for signing JWTs   | output of `python -c "import secrets; print(secrets.token_hex(32))"` |
 | `ALGORITHM`                   | JWT signing algorithm     | `HS256` |
 | `ACCESS_TOKEN_EXPIRE_MINUTES` | Token lifetime in minutes | `30`    |
+| `DATABASE_URL` (optional)     | DB connection; defaults to SQLite (`backend/data/database.db`, created automatically) | `postgresql+psycopg://user:pass@host:5432/dashboard` |
 
-The SQLite database file (`database.db`) is created automatically on first
-start; no configuration needed.
+The frontend knows one **build-time** variable: `VITE_API_URL` (base URL of
+the API). Unset in development it falls back to `http://localhost:8000`; in
+the production image it is left empty so the app uses relative paths behind
+a reverse proxy (same origin).
+
+## Docker
+
+Both apps ship with a Dockerfile. Build and run locally:
+
+```bash
+# Backend (secrets are passed at runtime, never baked into the image)
+cd backend
+docker build -t dashboard-backend .
+docker run --rm -p 8000:8000 --env-file app/.env dashboard-backend
+
+# Frontend (multi-stage: Node build → nginx with SPA fallback)
+cd frontend
+docker build -t dashboard-frontend --build-arg VITE_API_URL=http://localhost:8000 .
+docker run --rm -p 5173:80 dashboard-frontend
+```
+
+On every push to `main`, GitHub Actions builds both images and pushes them
+to the GitHub Container Registry as
+`ghcr.io/<owner>/dashboard-backend` and `ghcr.io/<owner>/dashboard-frontend`
+(tags: `latest` + commit SHA). See `.github/workflows/docker.yml`.

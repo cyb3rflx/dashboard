@@ -24,7 +24,14 @@ A dashboard where users register, log in, and manage their own **items**
   (`frontend/src/api/client.ts`) that sends credentials and redirects to
   `/login` on 401. Exception: the login request uses plain `fetch`, since a
   401 there means "wrong credentials", not "session expired".
-- DB: SQLite in development, Postgres later (via SQLModel/SQLAlchemy).
+- DB: configured via `DATABASE_URL` env var – SQLite by default (development),
+  Postgres in deployment (via SQLModel/SQLAlchemy, driver `psycopg`).
+- **Deployment:** both apps are containerized (Dockerfiles in `backend/` and
+  `frontend/`). A GitHub Actions workflow (`.github/workflows/docker.yml`)
+  builds and pushes images to ghcr.io on every push to `main`. Production
+  target is same-origin behind a reverse proxy/ingress (frontend and API on
+  one domain, relative API paths via empty `VITE_API_URL`) – no CORS needed
+  there; the CORS config only serves local development.
 
 ## Commands
 
